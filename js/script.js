@@ -1,11 +1,13 @@
 $(document).ready(function () {
+  // Initialize Superslides
   $("#slides").superslides({
     animation: "fade",
     play: 5000,
     pagination: false,
   });
 
-  var typed = new Typed(".typed", {
+  // Initialize Typed.js for animated typing effect
+  new Typed(".typed", {
     strings: ["Jr. Full-Stack", "Video Editor", "Discord Bot Developer"],
     typeSpeed: 60,
     startDelay: 900,
@@ -15,31 +17,26 @@ $(document).ready(function () {
     backSpeed: 40,
   });
 
+  // Initialize Owl Carousel
   $(".owl-carousel").owlCarousel({
     loop: true,
     items: 4,
     responsive: {
-      0: {
-        items: 1,
-      },
-      480: {
-        items: 2,
-      },
-      768: {
-        items: 3,
-      },
-      938: {
-        items: 4,
-      },
+      0: { items: 1 },
+      480: { items: 2 },
+      768: { items: 3 },
+      938: { items: 4 },
     },
   });
 
-  var skillsTopOffset = $(".skillsSection").offset().top;
-  var statsTopOffset = $(".statsSection").offset().top;
-  var countUpFinished = false;
+  // Detect scroll position for triggering animations
+  var skillsSectionOffset = $(".skillsSection").offset().top;
+  var statsSectionOffset = $(".statsSection").offset().top;
+  var countUpTriggered = false;
 
   $(window).scroll(function () {
-    if (window.pageYOffset > skillsTopOffset - $(window).height() + 200) {
+    // Activate EasyPieChart when the skills section comes into view
+    if (window.pageYOffset > skillsSectionOffset - $(window).height() + 200) {
       $(".chart").easyPieChart({
         easing: "easeInOut",
         barColor: "#fff",
@@ -52,57 +49,61 @@ $(document).ready(function () {
         },
       });
     }
-    if (
-      !countUpFinished &&
-      window.pageYOffset > statsTopOffset - $(window).height() + 200
-    ) {
+
+    // Activate CountUp animation for statistics section
+    if (!countUpTriggered && window.pageYOffset > statsSectionOffset - $(window).height() + 200) {
       $(".counter").each(function () {
         var element = $(this);
-        var endVal = parseInt(element.text());
-        element.countup(endVal);
+        var endValue = parseInt(element.text(), 10);
+        element.countup(endValue);
       });
-      countUpFinished = true;
+      countUpTriggered = true;
     }
   });
 
+  // Initialize Fancybox for media popups
   $("[data-fancybox]").fancybox();
+
+  // Filter portfolio items using Isotope
   $("#filters a").click(function () {
     $("#filters .current").removeClass("current");
     $(this).addClass("current");
 
-    var selector = $(this).attr("data-filter");
+    var filterValue = $(this).attr("data-filter");
 
     $(".items").isotope({
-      filter: selector,
+      filter: filterValue,
       animationOptions: {
         duration: 1500,
         easing: "linear",
         queue: false,
       },
     });
+
     return false;
   });
 
+  // Smooth scrolling for navigation links
   $("#navigation li a").click(function (e) {
     e.preventDefault();
     var targetElement = $(this).attr("href");
     var targetPosition = $(targetElement).offset().top;
+
     $("html, body").animate({ scrollTop: targetPosition - 50 }, "slow");
   });
 
+  // Sticky Navigation Bar
   const nav = $("#navigation");
-  const navTop = nav.offset().top;
+  const navTopOffset = nav.offset().top;
 
-  $(window).on("scroll", stickyNavigation);
+  $(window).on("scroll", handleStickyNavigation);
 
-  function stickyNavigation() {
+  function handleStickyNavigation() {
     var body = $("body");
-    if ($(window).scrollTop() >= navTop) {
-      body.css("padding-top", nav.outerHeight() + "px");
-      body.addClass("fixedNav");
+    if ($(window).scrollTop() >= navTopOffset) {
+      body.css("padding-top", nav.outerHeight() + "px").addClass("fixedNav");
     } else {
-      body.css("padding-top", 0);
-      body.removeClass("fixedNav");
+      body.css("padding-top", 0).removeClass("fixedNav");
     }
   }
 });
